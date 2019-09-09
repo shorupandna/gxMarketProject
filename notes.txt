@@ -1,0 +1,4 @@
+* -> change chain_id in db.js file if switching between networks
+* -> if any new asset is added add it to rinkeby and mainnet addresses array in the db.js file
+* -> private_key,eth_addr and contract address must be updated in .env file
+* -> chane endpoint infura url whenever network is changed
