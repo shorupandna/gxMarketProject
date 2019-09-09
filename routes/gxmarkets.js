@@ -24,13 +24,13 @@ var userIntrestCalculationSupply = (req, res) => {
             supplyCalculation.save(function (err, supply_acure_saved) {
                 console.log(supply_acure_saved);
                 if (supply_acure_saved) {
-                    res.send({ status: "success", message: "success", message: supply_acure_saved });
+                    res.send(supply_acure_saved);
                 } else {
-                    res.send({ status: "failure", message: "failed in saving intrest calculation" });
+                    res.send("failed in saving intrest calculation");
                 }
             })
         } else {
-            res.send({ status: "failure", message: "user_eth_addr not found " });
+            res.send("user_eth_addr not found ");
         };
     });
 };
@@ -62,9 +62,9 @@ var getAllSupplyStatistics = (req, res) => {
                 });
                 return obj;
             }, {}));
-            res.send({ status: "success", user_statistics: result });
+            res.send(result);
         } else {
-            res.send({ status: "failure", message: "No Docs Available" });
+            res.send("No Docs Available");
         }
     })
 };
@@ -98,9 +98,9 @@ var getUserSupplyStatistics = (req, res) => {
 
                 return obj;
             }, {});
-            res.send({ status: "success", message: result });
+            res.send(result);
         } else {
-            res.send({ status: "failure", message: "No Docs Available For This User " + req.body.user_eth_addr });
+            res.send(req.body.user_eth_addr);
         }
     })
 };
@@ -108,9 +108,9 @@ var getUserSupplyStatistics = (req, res) => {
 var getUserSupplyStatisticsForCoin = (req, res) => {
     userSupplyStatistics.find({ $and: [{ user_eth_addr: req.body.user_eth_addr }, { market_name: req.body.market_name }] }).exec(function (err, supply_statistics) {
         if (supply_statistics) {
-            res.send({ status: "success", message: supply_statistics });
+            res.send(supply_statistics);
         } else {
-            res.send({ status: "failure", message: "No Docs Available" });
+            res.send("No Docs Available");
         }
     });
 };
@@ -122,9 +122,9 @@ var totalSupplyIntrst = (req, res) => {
             { $group: { _id: "$market_name", total_supply_balance_snapshot: { $sum: "$supply_balance_snapshot" }, total_withdraw_balance_snapshot: { $sum: "$withdraw_balance_snapshot" }, total_supply_accrue_snapshot: { $sum: "$supply_accrue_snapshot" }, count: { $sum: 1 } } }]).exec(function (err, data) {
                 if (data) {
                     console.log(data);
-                    res.send({ status: "success", message: data });
+                    res.send(data);
                 } else {
-                    res.send({ status: "failure", message: "No data available" })
+                    res.send("No data available")
                 }
 
             });
@@ -145,13 +145,13 @@ var userIntrestCalculationBorrow = (req, res) => {
             borrowCalculation.save(function (err, borrow_incur_saved) {
                 console.log(borrow_incur_saved);
                 if (borrow_incur_saved) {
-                    res.send({ status: "success", message: "success", message: borrow_incur_saved });
+                    res.send(borrow_incur_saved);
                 } else {
-                    res.send({ status: "failure", message: "failed in saving borrow calculation" });
+                    res.send("failed in saving borrow calculation");
                 }
             });
         } else {
-            res.send({ status: "failure", message: "No user_eth_addr found" });
+            res.send("No user_eth_addr found");
         };
     });
 };
@@ -183,9 +183,9 @@ var getAllBorrowStatistics = (req, res) => {
                 });
                 return obj;
             }, {}));
-            res.send({ status: "success", user_statistics: result });
+            res.send(result);
         } else {
-            res.send({ status: "failure", message: "No Docs Available" });
+            res.send("No Docs Available");
         }
     })
 };
@@ -219,9 +219,9 @@ var getUserBorrowStatistics = (req, res) => {
 
                 return obj;
             }, {});
-            res.send({ status: "success", message: result });
+            res.send(result);
         } else {
-            res.send({ status: "failure", message: "No Docs Available For This User " + req.body.user_eth_addr });
+            res.send("No Docs Available For This User " + req.body.user_eth_addr);
         }
     })
 };
@@ -230,9 +230,9 @@ var getUserBorrowStatisticsForCoin = (req, res) => {
     userBorrowStatistics.find({ $and: [{ user_eth_addr: req.body.user_eth_addr }, { market_name: req.body.market_name }] }).exec(function (err, borrow_statistics) {
         if (borrow_statistics) {
 
-            res.send({ status: "success", message: borrow_statistics });
+            res.send(borrow_statistics);
         } else {
-            res.send({ status: "failure", message: "No Docs Available" });
+            res.send("No Docs Available");
         }
     });
 };
@@ -244,9 +244,9 @@ var totalBorrowIntrst = (req, res) => {
             { $group: { _id: { coin: "$market_name", total_borrow_balance_snapshot: { $sum: "$borrow_balance_snapshot" }, total_repay_balance_snapshot: { $sum: "$repay_balance_snapshot" }, total_borrow_incur_snapshot: { $sum: "$borrow_incur_snapshot" }, count: { $sum: 1 } } } }]).exec(function (err, data) {
                 if (data) {
                     console.log(data);
-                    res.send({ status: "success", message: data });
+                    res.send(data);
                 } else {
-                    res.send({ status: "failure", message: "No data available" })
+                    res.send("No data available")
                 }
 
             });
@@ -271,17 +271,17 @@ var createGxmmMarket = (req, res) => {
             var userDetails = new userData(query);
             userDetails.save(function (err, user_saved) {
                 if (user_saved) {
-                    res.send({ status: 'success', message: user_saved });
+                    res.send(true);
                 } else {
-                    res.send({ status: 'failure', message: 'Something Gone Wrong In Saving User Data' });
+                    res.send('Something Gone Wrong In Saving User Data');
                 }
             });
         } else {
             userData.update(query).exec(function (err, user_updated) {
                 if (user_updated) {
-                    res.send({ status: 'success', message: 'Updated Succesfully' });
+                    res.send(true);
                 } else {
-                    res.send({ status: 'failure', message: 'something wrong in updating user data' });
+                    res.send('something wrong in updating user data');
                 }
             });
 
@@ -296,7 +296,7 @@ var getGxmmMarkets = (req, res) => {
             console.log(err);
         } else {
             console.log(docs);
-            docs.length > 0 ? res.send({ status: 'success', message: docs }) : res.send({ status: 'failure', message: 'No documents available matched to ' + req.body.user_eth_addr + ' & ' + req.body.market_name });
+            docs.length > 0 ? res.send('Enabled') : res.send('Disabled');
         }
     });
 };
@@ -307,13 +307,13 @@ var gxmmWithdrawRequest = (req, res) => {
             var withdraw_req = new Withdrawl(req.body);
             withdraw_req.save(function (err, withdraw_req_saved) {
                 if (withdraw_req_saved) {
-                    res.send({ status: 'success', message: "Withdraw Request Saved" });
+                    res.send(true);
                 } else {
-                    res.send({ status: 'failure', message: 'Failure In Saving Withdraw Request' });
+                    res.send('Failure In Saving Withdraw Request');
                 }
             })
         } else {
-            res.send({ status: 'failure', message: 'Data not enetered' })
+            res.send('Data not enetered')
         }
     });
 };
@@ -321,7 +321,7 @@ var gxmmWithdrawRequest = (req, res) => {
 var getGxmmWithdrawls = (req, res) => {
     Withdrawl.find({ user_eth_addr: req.body.user_eth_addr.toLowerCase() }).exec(function (err, docs) {
         if (!docs) {
-            res.send({ status: 'failure' });
+            res.send(err);
         }
         else {
             let pending_withdrawals = [];
@@ -340,7 +340,7 @@ var getGxmmWithdrawls = (req, res) => {
                     pending_withdrawals.push(txn);
                 if (txn.status == 'partial') partial_withdrawals.push(txn);
             });
-            res.send({ status: 'success', pending: pending_withdrawals, partial: partial_withdrawals, completed: completed_withdrawals });
+            res.send({ pending: pending_withdrawals, partial: partial_withdrawals, completed: completed_withdrawals });
         }
     });
 };
@@ -351,13 +351,13 @@ var saveTransaction = (req, res) => {
             var saveTransaction = new Transcations(req.body);
             saveTransaction.save(function (err, transaction_saved) {
                 if (transaction_saved) {
-                    res.send({ status: 'success', message: transaction_saved });
+                    res.send(true);
                 } else {
-                    res.send({ status: 'failure', message: 'Something wrong in saving transcation' });
+                    res.send('Something wrong in saving transcation');
                 }
             });
         } else {
-            res.send({ status: 'failure', message: err });
+            res.send(err);
         }
     });
 };
@@ -368,10 +368,9 @@ var getGxmmTransctions = (req, res) => {
     }
     Transcations.find(query).exec(function (err, docs) {
         if (docs) {
-            res.send({ status: 'success', message: docs });
-
+            res.send(docs);
         } else {
-            res.send({ status: 'failure', message: 'No transcations found' });
+            res.send('No Data');
         }
     });
 };
@@ -398,8 +397,17 @@ var getAllGxmmWithdrawls = (req, res) => {
                     pending_withdrawals.push(txn);
                 if (txn.status == 'partial') partial_withdrawals.push(txn);
             });
-            res.send({ status: 'success', pending: pending_withdrawals, partial: partial_withdrawals, completed: completed_withdrawals });
+            res.json({
+                success: true,
+                pending_withdrawals: pending_withdrawals,
+                partial_withdrawals: partial_withdrawals,
+                completed_withdrawals: completed_withdrawals
+            })
         } else {
+            res.json({
+                success: false,
+                message: toString(error.message)
+            });
 
         }
     });
@@ -416,21 +424,23 @@ var gxmmUpdateWithdrawl = async (req, res) => {
             await Withdrawl.findOneAndUpdate({ _id: req.body.Id }, { $set: obj }).exec(function (err, updated) {
                 if (updated) {
                     res.json({
-                        status: 'success',
-                        message: 'Successfully Updated',
-                        records: updated
+                        success: true,
+                        message: "Successfully Updated"
                     });
                 } else {
-                    res.send({ status: 'failure', message: err });
+                    res.send(err);
                 }
             });
         } catch (error) {
-            res.json({ status: 'failure', message: toString(error.message) });
+            res.json({
+                success: false,
+                message: toString(error.message)
+            });
         }
     } else {
         res.json({
-            status: failure,
-            message: 'Please Send The ID'
+            success: false,
+            message: "Please Send The ID"
         });
     }
 };
@@ -447,14 +457,13 @@ var gxmmTransactionStatusUpdate = async (req, res) => {
         Withdrawl.findOneAndUpdate({ _id: req.body.Id }, { $set: { status: req.body.status } }).exec(function (err, updated) {
             if (updated) {
                 res.json({
-                    status: 'success',
-                    message: 'Successfully Updated',
-                    records: updated
+                    success: true,
+                    message: "Successfully Updated"
                 });
             } else {
                 res.json({
-                    status: 'failure',
-                    message: 'Not updated'
+                    success: false,
+                    message: toString(error.message)
                 });
             }
         });

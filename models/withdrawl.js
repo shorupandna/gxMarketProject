@@ -43,4 +43,4 @@ var withdrawlSchema = new Schema({
     }
 });
 
-module.exports = mongoose.model('withdrawl', withdrawlSchema);
+module.exports = mongoose.model('withdrawal', withdrawlSchema);
