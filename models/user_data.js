@@ -8,7 +8,8 @@ var Schema = mongoose.Schema;
 
 var userDataSchema = new Schema({
     user_eth_addr: {
-        type: String
+        type: String,
+        required: true
     },
     description: {
         type: String
@@ -16,29 +17,24 @@ var userDataSchema = new Schema({
     markets: [
         {
             "name": {
-                type: String
+                type: String,
+                required: true
             },
             "market_eth_addr": {
-                type: String
+                type: String,
+                required: true
             }
         },
     ],
     txn_hash: {
-        type: String
-    },
-    user_type: {
         type: String,
-        enum: ['admin', 'teachers']
+        required: true
     },
-    status: {
-        type: String,
-        enum: ['active', 'inactive']
+    time_stamp: {
+        type: Number,
+        default: Date.now()
     },
-    created_Date: {
-        type: Date,
-        default: new Date()
-    },
-    updated_Date: {
+    created_at: {
         type: Date,
         default: new Date()
     }

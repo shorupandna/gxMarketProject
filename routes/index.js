@@ -5,7 +5,6 @@
  * @author      :: Saileela Puvvada
  */
 var router = require('express').Router();
-require('./gxmarkets').route(router); //routes
-require('./gxmmauto').route(router);
+require('./gxmarkets').route(router); 
 module.exports = router;
 

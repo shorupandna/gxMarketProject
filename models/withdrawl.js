@@ -33,11 +33,11 @@ var withdrawlSchema = new Schema({
     status: {
         type: String
     },
-    created_Date: {
-        type: Date,
-        default: new Date()
+    time_stamp: {
+        type: Number,
+        default: Date.now()
     },
-    updated_Date: {
+    created_at: {
         type: Date,
         default: new Date()
     }

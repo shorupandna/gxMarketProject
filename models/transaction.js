@@ -14,8 +14,7 @@ var transactionSchema = new Schema({
         type: String
     },
     market_name: {
-        type: String,
-        enum: ['WETH', 'BAT', 'GXT', 'ZRX', 'DAI', '0X', 'ZRX', 'REP']
+        type: String
     },
     txn_hash: {
         type: String
@@ -34,11 +33,11 @@ var transactionSchema = new Schema({
         type: String,
         enum: ['pending', 'completed', 'partial', 'Procuring Coins', 'Sufficient Coins', 'Insufficient Coins']
     },
-    created_Date: {
-        type: Date,
-        default: new Date()
+    time_stamp: {
+        type: Number,
+        default: Date.now()
     },
-    updated_Date: {
+    created_at: {
         type: Date,
         default: new Date()
     }
