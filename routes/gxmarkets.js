@@ -12,7 +12,7 @@ var userBorrowStatistics = require('../models/user_borrow_statistics');
 
 //supply
 var userIntrestCalculationSupply = (req, res) => {
-    userData.findOne({ user_eth_addr: req.body.user_eth_addr }).exec(function (err, user) {
+    userData.findOne({ user_eth_addr: req.body.user_eth_addr.toLowerCase() }).exec(function (err, user) {
         if (user) {
             var supplyCalculation = new userSupplyStatistics({
                 user_eth_addr: user.user_eth_addr,
@@ -70,7 +70,7 @@ var getAllSupplyStatistics = (req, res) => {
 };
 
 var getUserSupplyStatistics = (req, res) => {
-    userSupplyStatistics.find({ user_eth_addr: req.body.user_eth_addr }).exec(function (err, user_statistics) {
+    userSupplyStatistics.find({ user_eth_addr: req.body.user_eth_addr.toLowerCase() }).exec(function (err, user_statistics) {
         console.log(user_statistics);
         if (user_statistics) {
             var ref = {};
@@ -100,13 +100,13 @@ var getUserSupplyStatistics = (req, res) => {
             }, {});
             res.send(result);
         } else {
-            res.send(req.body.user_eth_addr);
+            res.send(req.body.user_eth_addr.toLowerCase());
         }
     })
 };
 
 var getUserSupplyStatisticsForCoin = (req, res) => {
-    userSupplyStatistics.find({ $and: [{ user_eth_addr: req.body.user_eth_addr }, { market_name: req.body.market_name }] }).exec(function (err, supply_statistics) {
+    userSupplyStatistics.find({ $and: [{ user_eth_addr: req.body.user_eth_addr.toLowerCase() }, { market_name: req.body.market_name }] }).exec(function (err, supply_statistics) {
         if (supply_statistics) {
             res.send(supply_statistics);
         } else {
@@ -118,7 +118,7 @@ var getUserSupplyStatisticsForCoin = (req, res) => {
 var totalSupplyIntrst = (req, res) => {
     userSupplyStatistics.aggregate(
         [
-            { $match: { user_eth_addr: req.body.user_eth_addr } },
+            { $match: { user_eth_addr: req.body.user_eth_addr.toLowerCase() } },
             { $group: { _id: "$market_name", total_supply_balance_snapshot: { $sum: "$supply_balance_snapshot" }, total_withdraw_balance_snapshot: { $sum: "$withdraw_balance_snapshot" }, total_supply_accrue_snapshot: { $sum: "$supply_accrue_snapshot" }, count: { $sum: 1 } } }]).exec(function (err, data) {
                 if (data) {
                     console.log(data);
@@ -133,7 +133,7 @@ var totalSupplyIntrst = (req, res) => {
 
 //borrow 
 var userIntrestCalculationBorrow = (req, res) => {
-    userData.findOne({ user_eth_addr: req.body.user_eth_addr }).exec(function (err, user) {
+    userData.findOne({ user_eth_addr: req.body.user_eth_addr.toLowerCase() }).exec(function (err, user) {
         if (user) {
             var borrowCalculation = new userBorrowStatistics({
                 user_eth_addr: user.user_eth_addr,
@@ -191,7 +191,7 @@ var getAllBorrowStatistics = (req, res) => {
 };
 
 var getUserBorrowStatistics = (req, res) => {
-    userBorrowStatistics.find({ user_eth_addr: req.body.user_eth_addr }).exec(function (err, user_borrow_statistics) {
+    userBorrowStatistics.find({ user_eth_addr: req.body.user_eth_addr.toLowerCase() }).exec(function (err, user_borrow_statistics) {
         console.log(user_borrow_statistics);
         if (user_borrow_statistics) {
             var ref = {};
@@ -221,13 +221,13 @@ var getUserBorrowStatistics = (req, res) => {
             }, {});
             res.send(result);
         } else {
-            res.send("No Docs Available For This User " + req.body.user_eth_addr);
+            res.send("No Docs Available For This User " + req.body.user_eth_addr.toLowerCase());
         }
     })
 };
 
 var getUserBorrowStatisticsForCoin = (req, res) => {
-    userBorrowStatistics.find({ $and: [{ user_eth_addr: req.body.user_eth_addr }, { market_name: req.body.market_name }] }).exec(function (err, borrow_statistics) {
+    userBorrowStatistics.find({ $and: [{ user_eth_addr: req.body.user_eth_addr.toLowerCase() }, { market_name: req.body.market_name }] }).exec(function (err, borrow_statistics) {
         if (borrow_statistics) {
 
             res.send(borrow_statistics);
@@ -240,7 +240,7 @@ var getUserBorrowStatisticsForCoin = (req, res) => {
 var totalBorrowIntrst = (req, res) => {
     userBorrowStatistics.aggregate(
         [
-            { $match: { user_eth_addr: req.body.user_eth_addr } },
+            { $match: { user_eth_addr: req.body.user_eth_addr.toLowerCase() } },
             { $group: { _id: { coin: "$market_name", total_borrow_balance_snapshot: { $sum: "$borrow_balance_snapshot" }, total_repay_balance_snapshot: { $sum: "$repay_balance_snapshot" }, total_borrow_incur_snapshot: { $sum: "$borrow_incur_snapshot" }, count: { $sum: 1 } } } }]).exec(function (err, data) {
                 if (data) {
                     console.log(data);
@@ -254,10 +254,10 @@ var totalBorrowIntrst = (req, res) => {
 
 
 var createGxmmMarket = (req, res) => {
-    userData.findOne({ user_eth_addr: req.body.user_eth_addr }, function (err, user_found) {
+    userData.findOne({ user_eth_addr: req.body.user_eth_addr.toLowerCase() }, function (err, user_found) {
         console.log(user_found);
         var query = {
-            user_eth_addr: req.body.user_eth_addr,
+            user_eth_addr: req.body.user_eth_addr.toLowerCase(),
             description: `Enabled ${req.body.market_name}`,
             markets: [
                 {
@@ -273,15 +273,22 @@ var createGxmmMarket = (req, res) => {
                 if (user_saved) {
                     res.send(true);
                 } else {
-                    res.send('Something Gone Wrong In Saving User Data');
+                    res.send('Something Gone Wrong In Creating Market');
                 }
             });
         } else {
-            userData.update(query).exec(function (err, user_updated) {
+            userData.update({ user_eth_addr: query.user_eth_addr }, {
+                $push: {
+                    markets: {
+                        name: request.market_name,
+                        market_eth_addr: request.market_eth_addr
+                    }
+                }
+            }).exec(function (err, user_updated) {
                 if (user_updated) {
                     res.send(true);
                 } else {
-                    res.send('something wrong in updating user data');
+                    res.send('Something Gone Wrong In Updating Market');
                 }
             });
 
@@ -290,7 +297,7 @@ var createGxmmMarket = (req, res) => {
 }
 
 var getGxmmMarkets = (req, res) => {
-    userData.find({ $and: [{ user_eth_addr: req.body.user_eth_addr, 'markets.name': req.body.market_name }] }, { 'markets.name': 1, _id: 0 }).exec(function (err, docs) {
+    userData.find({ $and: [{ user_eth_addr: req.body.user_eth_addr.toLowerCase(), 'markets.name': req.body.market_name }] }, { 'markets.name': 1, _id: 0 }).exec(function (err, docs) {
         if (err) {
             res.send(false);
             console.log(err);
@@ -302,8 +309,8 @@ var getGxmmMarkets = (req, res) => {
 };
 
 var gxmmWithdrawRequest = (req, res) => {
-    Withdrawl.find({}).exec(function (err, withdraw_request) {
-        if (withdraw_request) {
+    userData.find({ user_eth_addr: req.body.user_eth_addr.toLowerCase() }).exec(function (err, user) {
+        if (user) {
             var withdraw_req = new Withdrawl(req.body);
             withdraw_req.save(function (err, withdraw_req_saved) {
                 if (withdraw_req_saved) {
@@ -311,16 +318,16 @@ var gxmmWithdrawRequest = (req, res) => {
                 } else {
                     res.send('Failure In Saving Withdraw Request');
                 }
-            })
+            });
         } else {
-            res.send('Data not enetered')
-        }
+            res.send("Not a User");
+        };
     });
-};
+}
 
 var getGxmmWithdrawls = (req, res) => {
     Withdrawl.find({ user_eth_addr: req.body.user_eth_addr.toLowerCase() }).exec(function (err, docs) {
-        if (!docs) {
+        if (err) {
             res.send(err);
         }
         else {
@@ -335,7 +342,8 @@ var getGxmmWithdrawls = (req, res) => {
                     txn.status == 'pending' ||
                     txn.status == 'partial' ||
                     txn.status == 'Procuring Coins' ||
-                    txn.status == 'Sufficient Coins'
+                    txn.status == 'Sufficient Coins' ||
+                    txn.status == 'Insufficient Coins'
                 )
                     pending_withdrawals.push(txn);
                 if (txn.status == 'partial') partial_withdrawals.push(txn);
@@ -347,7 +355,9 @@ var getGxmmWithdrawls = (req, res) => {
 
 var saveTransaction = (req, res) => {
     Transcations.find({}).exec(function (err, transactions) {
-        if (transactions) {
+        if (err) {
+            res.send(err);
+        } else {
             var saveTransaction = new Transcations(req.body);
             saveTransaction.save(function (err, transaction_saved) {
                 if (transaction_saved) {
@@ -356,8 +366,6 @@ var saveTransaction = (req, res) => {
                     res.send('Something wrong in saving transcation');
                 }
             });
-        } else {
-            res.send(err);
         }
     });
 };
@@ -367,10 +375,10 @@ var getGxmmTransctions = (req, res) => {
         $and: [{ user_eth_addr: req.body.user_eth_addr.toLowerCase() }, { market_name: req.body.market_name }]
     }
     Transcations.find(query).exec(function (err, docs) {
-        if (docs) {
-            res.send(docs);
+        if (err) {
+            res.send(err);
         } else {
-            res.send('No Data');
+            res.send(docs);
         }
     });
 };

@@ -11,8 +11,8 @@ module.exports = function () {
         default:
         case 'dev':
             return {
-                MONGO_SERVER_PATH: 'mongodb://localhost:27017/gxmarkets_mainnet',   //---local
-                MONGO_SERVER_PATH: "mongodb://gxmm123:gxmm270819@13.59.230.221:27017/gxmarkets_mainnet",   //--server  
+                MONGO_LOCAL_PATH: 'mongodb://localhost:27017/gxmarkets_mainnet',   //---local
+                // MONGO_SERVER_PATH: "mongodb://gxmm123:gxmm270819@13.59.230.221:27017/gxmarkets_mainnet",   //--server  
                 APP_PORT: 3486,
                 cryptocompare: 'https://min-api.cryptocompare.com/data/pricemulti?fsyms=BAT,DAI,ETH,REP,USDC,ZRX&tsyms=USD',
                 ccxtcompare: 'http://3.16.168.61:80/ccxt/compare/multiplePrice?fsyms=BAT,DAI,ETH,REP,USDC,ZRX&tsyms=USD',

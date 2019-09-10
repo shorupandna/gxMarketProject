@@ -8,7 +8,10 @@ var Schema = mongoose.Schema;
 
 var withdrawlSchema = new Schema({
     user_eth_addr: {
-        type: String,
+        type: String
+    },
+    available_withdraw_amount: {
+        type: String
     },
     market_name: {
         type: String
