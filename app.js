@@ -10,8 +10,13 @@ let methodOverride = require('method-override');
 let configAuth = require('./config')();
 let routes = require('./routes');
 const mongoose = require('mongoose');
-app.use(bodyParser.json({ limit: '10mb' })); // pull information from html in POST
-app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+app.use(bodyParser.json({
+    limit: '10mb'
+})); // pull information from html in POST
+app.use(bodyParser.urlencoded({
+    limit: '10mb',
+    extended: true
+}));
 app.use(methodOverride());
 
 /*Allow CORS*/
