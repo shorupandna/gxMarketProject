@@ -16,6 +16,7 @@ var userSupplyStatistics = new Schema({
     //supply
     supply_balance_snapshot: {
         type: Number,
+        default: "0"
     },
     supply_accrue_snapshot: {
         type: Number,
@@ -25,11 +26,12 @@ var userSupplyStatistics = new Schema({
         default: Date.now()
     },
     withdraw_balance_snapshot: {
-        type: Number
+        type: Number,
+        default: "0"
     },
     created_at: {
         type: Date,
-        default: new Date()
+        default: Date.now()
     }
 });
 

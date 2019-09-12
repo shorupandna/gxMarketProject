@@ -19,9 +19,9 @@ var userIntrestCalculationSupply = (req, res) => {
             var supplyCalculation = new userSupplyStatistics({
                 user_eth_addr: user.user_eth_addr,
                 market_name: req.body.market_name,
-                supply_balance_snapshot: req.body.supply_balance_snapshot ? req.body.supply_balance_snapshot : 0,
+                supply_balance_snapshot: req.body.supply_balance_snapshot,
                 supply_accrue_snapshot: req.body.supply_accrue_snapshot,
-                withdraw_balance_snapshot: req.body.withdraw_balance_snapshot ? req.body.withdraw_balance_snapshot : 0
+                withdraw_balance_snapshot: req.body.withdraw_balance_snapshot
             });
             supplyCalculation.save(function (err, supply_acure_saved) {
                 console.log(supply_acure_saved);
@@ -125,42 +125,89 @@ var getUserSupplyStatisticsForCoin = (req, res) => {
     });
 };
 
+// var totalSupplyIntrst = (req, res) => {
+//     userSupplyStatistics.aggregate(
+//         [{
+//             $match: {
+//                 user_eth_addr: req.body.user_eth_addr.toLowerCase()
+//             }
+//         },
+//         {
+//             $group: {
+//                 _id: "$market_name",
+//                 total_supply_balance_snapshot: {
+//                     $sum: "$supply_balance_snapshot"
+//                 },
+//                 total_withdraw_balance_snapshot: {
+//                     $sum: "$withdraw_balance_snapshot"
+//                 },
+//                 total_supply_accrue_snapshot: {
+//                     $sum: "$supply_accrue_snapshot"
+//                 },
+//                 count: {
+//                     $sum: 1
+//                 }
+//             }
+//         }
+//         ]).exec(function (err, data) {
+//             if (data) {
+//                 res.send(data);
+//             } else {
+//                 res.send("No data available")
+//             }
+
+//         });
+// }
+
+
 var totalSupplyIntrst = (req, res) => {
     userSupplyStatistics.aggregate(
         [{
-                $match: {
-                    user_eth_addr: req.body.user_eth_addr.toLowerCase()
-                }
-            },
-            {
-                $group: {
-                    _id: "$market_name",
-                    total_supply_balance_snapshot: {
-                        $sum: "$supply_balance_snapshot"
-                    },
-                    total_withdraw_balance_snapshot: {
-                        $sum: "$withdraw_balance_snapshot"
-                    },
-                    total_supply_accrue_snapshot: {
-                        $sum: "$supply_accrue_snapshot"
-                    },
-                    count: {
-                        $sum: 1
-                    }
+            $match: {
+                $and: [{ user_eth_addr: req.body.user_eth_addr.toLowerCase() }, { market_name: req.body.market_name }]
+            }
+        },
+        {
+            $group: {
+                _id: "$market_name",
+                total_supply_balance_snapshot: {
+                    $sum: "$supply_balance_snapshot"
+                },
+                total_withdraw_balance_snapshot: {
+                    $sum: "$withdraw_balance_snapshot"
+                },
+                count: {
+                    $sum: 1
                 }
             }
-        ]).exec(function (err, data) {
-        if (data) {
-            console.log(data);
-            res.send(data);
-        } else {
-            res.send("No data available")
         }
+        ]).exec(function (err, data) {
+            if (data) {
+                res.send(data);
+            } else {
+                res.send("No data available")
+            }
 
-    });
+        });
 }
-
-
+var WithdrawBalsnapShot = function (req, res) {
+    userSupplyStatistics.find({ $and: [{ user_eth_addr: req.body.user_eth_addr.toLowerCase() }, { market_name: req.body.market_name }] }).sort({ supply_withdraw_timestamp_snapshot: -1 }).exec(function (err, sorted_res) {
+        if (sorted_res) {
+            res.send(sorted_res[0].supply_accrue_snapshot);
+        } else {
+            res.send('Something Wrong');
+        }
+    })
+}
+var RepayBalsnapShot = function (req, res) {
+    userBorrowStatistics.find({ $and: [{ user_eth_addr: req.body.user_eth_addr.toLowerCase() }, { market_name: req.body.market_name }] }).sort({ borrow_repay_timestamp_snapshot: -1 }).exec(function (err, sorted_res) {
+        if (sorted_res) {
+            res.send(sorted_res[0].repay_balance_snapshot);
+        } else {
+            res.send('Something Wrong');
+        }
+    })
+}
 //borrow 
 var userIntrestCalculationBorrow = (req, res) => {
     userData.findOne({
@@ -277,43 +324,76 @@ var getUserBorrowStatisticsForCoin = (req, res) => {
     });
 };
 
+// var totalBorrowIntrst = (req, res) => {
+//     userBorrowStatistics.aggregate(
+//         [{
+//             $match: {
+//                 user_eth_addr: req.body.user_eth_addr.toLowerCase()
+//             }
+//         },
+//         {
+//             $group: {
+//                 _id: {
+//                     coin: "$market_name",
+//                     total_borrow_balance_snapshot: {
+//                         $sum: "$borrow_balance_snapshot"
+//                     },
+//                     total_repay_balance_snapshot: {
+//                         $sum: "$repay_balance_snapshot"
+//                     },
+//                     total_borrow_incur_snapshot: {
+//                         $sum: "$borrow_incur_snapshot"
+//                     },
+//                     count: {
+//                         $sum: 1
+//                     }
+//                 }
+//             }
+//         }
+//         ]).exec(function (err, data) {
+//             if (data) {
+//                 console.log(data);
+//                 res.send(data);
+//             } else {
+//                 res.send("No data available")
+//             }
+
+//         });
+// }
+
 var totalBorrowIntrst = (req, res) => {
     userBorrowStatistics.aggregate(
         [{
-                $match: {
-                    user_eth_addr: req.body.user_eth_addr.toLowerCase()
-                }
-            },
-            {
-                $group: {
-                    _id: {
-                        coin: "$market_name",
-                        total_borrow_balance_snapshot: {
-                            $sum: "$borrow_balance_snapshot"
-                        },
-                        total_repay_balance_snapshot: {
-                            $sum: "$repay_balance_snapshot"
-                        },
-                        total_borrow_incur_snapshot: {
-                            $sum: "$borrow_incur_snapshot"
-                        },
-                        count: {
-                            $sum: 1
-                        }
+            $match: {
+                $and: [{ user_eth_addr: req.body.user_eth_addr.toLowerCase() }, { market_name: req.body.market_name }]
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    coin: "$market_name",
+                    total_borrow_balance_snapshot: {
+                        $sum: "$borrow_balance_snapshot"
+                    },
+                    total_repay_balance_snapshot: {
+                        $sum: "$repay_balance_snapshot"
+                    },
+                    count: {
+                        $sum: 1
                     }
                 }
             }
-        ]).exec(function (err, data) {
-        if (data) {
-            console.log(data);
-            res.send(data);
-        } else {
-            res.send("No data available")
         }
+        ]).exec(function (err, data) {
+            if (data) {
+                console.log(data);
+                res.send(data);
+            } else {
+                res.send("No data available");
+            }
 
-    });
+        });
 }
-
 
 var createGxmmMarket = (req, res) => {
     userData.findOne({
@@ -353,7 +433,13 @@ var createGxmmMarket = (req, res) => {
                     res.send('Something Gone Wrong In Updating Market');
                 }
             });
-
+            var TranscationsStats = new Transcations({
+                user_eth_addr: req.body.user_eth_addr.toLowerCase(),
+                description: `Enabled ${req.body.market_name}`,
+                market_name: req.body.market_name,
+                txn_hash: req.body.txn_hash
+            });
+            TranscationsStats.save();
         }
     });
 }
@@ -595,11 +681,18 @@ module.exports.route = function (router) {
     router.post('/getuserstatistics/supply', getUserSupplyStatistics);
     router.post('/getusersstatisticsforcoin/supply', getUserSupplyStatisticsForCoin);
     router.post('/totalsupplyintrest', totalSupplyIntrst);
+    router.post('/updated_withdrawlbal_supply', WithdrawBalsnapShot);
+    // router.post('/totalsupplyintrest2', totalSupplyIntrst2);
+
     //borrow
     router.post('/userintrestcalc/borrow', userIntrestCalculationBorrow);
     router.get('/getallstatistics/borrow', getAllBorrowStatistics);
     router.post('/getuserstatistics/borrow', getUserBorrowStatistics);
     router.post('/getusersstatisticsforcoin/borrow', getUserBorrowStatisticsForCoin);
     router.post('/totalborrowintrest', totalBorrowIntrst);
+    router.post('/updated_repaybal_borrow', RepayBalsnapShot);
+    // router.post('/totalborrowintrest2', totalBorrowIntrst2);
+
+
 
 };

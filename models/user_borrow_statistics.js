@@ -14,10 +14,12 @@ var userBorrowStatistics = new Schema({
         type: String
     },
     borrow_balance_snapshot: {
-        type: Number
+        type: Number,
+        default: "0"
     },
     repay_balance_snapshot: {
-        type: Number
+        type: Number,
+        default: "0"
     },
     borrow_incur_snapshot: {
         type: Number
