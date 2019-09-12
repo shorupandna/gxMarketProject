@@ -173,8 +173,8 @@ var totalSupplyIntrst = (req, res) => {
                 total_supply_balance_snapshot: {
                     $sum: "$supply_balance_snapshot"
                 },
-                total_withdraw_balance_snapshot: {
-                    $sum: "$withdraw_balance_snapshot"
+                total_supply_accrue_snapshot: {
+                    $sum: "$supply_accrue_snapshot"
                 },
                 count: {
                     $sum: 1
@@ -190,19 +190,19 @@ var totalSupplyIntrst = (req, res) => {
 
         });
 }
-var WithdrawBalsnapShot = function (req, res) {
+var SupplyAccrueSnapshot = function (req, res) {
     userSupplyStatistics.find({ $and: [{ user_eth_addr: req.body.user_eth_addr.toLowerCase() }, { market_name: req.body.market_name }] }).sort({ supply_withdraw_timestamp_snapshot: -1 }).exec(function (err, sorted_res) {
         if (sorted_res) {
-            res.send(sorted_res[0].supply_accrue_snapshot);
+            res.send(sorted_res[0]);
         } else {
             res.send('Something Wrong');
         }
     })
 }
-var RepayBalsnapShot = function (req, res) {
+var BorrowIncurSnapshot = function (req, res) {
     userBorrowStatistics.find({ $and: [{ user_eth_addr: req.body.user_eth_addr.toLowerCase() }, { market_name: req.body.market_name }] }).sort({ borrow_repay_timestamp_snapshot: -1 }).exec(function (err, sorted_res) {
         if (sorted_res) {
-            res.send(sorted_res[0].repay_balance_snapshot);
+            res.send(sorted_res[0]);
         } else {
             res.send('Something Wrong');
         }
@@ -361,6 +361,7 @@ var getUserBorrowStatisticsForCoin = (req, res) => {
 //         });
 // }
 
+
 var totalBorrowIntrst = (req, res) => {
     userBorrowStatistics.aggregate(
         [{
@@ -375,8 +376,8 @@ var totalBorrowIntrst = (req, res) => {
                     total_borrow_balance_snapshot: {
                         $sum: "$borrow_balance_snapshot"
                     },
-                    total_repay_balance_snapshot: {
-                        $sum: "$repay_balance_snapshot"
+                    total_borrow_incur_snapshot: {
+                        $sum: "$borrow_incur_snapshot"
                     },
                     count: {
                         $sum: 1
@@ -389,7 +390,7 @@ var totalBorrowIntrst = (req, res) => {
                 console.log(data);
                 res.send(data);
             } else {
-                res.send("No data available");
+                res.send("No data available")
             }
 
         });
@@ -517,7 +518,7 @@ var getGxmmWithdrawls = (req, res) => {
 };
 
 var saveTransaction = (req, res) => {
-    Transcations.find({}).exec(function (err, transactions) {
+    userData.findOne({ user_eth_addr: req.body.user_eth_addr }).exec(function (err, transactions) {
         if (err) {
             res.send(err);
         } else {
@@ -680,18 +681,15 @@ module.exports.route = function (router) {
     router.get('/getallstatistics/supply', getAllSupplyStatistics);
     router.post('/getuserstatistics/supply', getUserSupplyStatistics);
     router.post('/getusersstatisticsforcoin/supply', getUserSupplyStatisticsForCoin);
+    router.post('/updated_supply_accrue', SupplyAccrueSnapshot);
     router.post('/totalsupplyintrest', totalSupplyIntrst);
-    router.post('/updated_withdrawlbal_supply', WithdrawBalsnapShot);
-    // router.post('/totalsupplyintrest2', totalSupplyIntrst2);
-
     //borrow
     router.post('/userintrestcalc/borrow', userIntrestCalculationBorrow);
     router.get('/getallstatistics/borrow', getAllBorrowStatistics);
     router.post('/getuserstatistics/borrow', getUserBorrowStatistics);
     router.post('/getusersstatisticsforcoin/borrow', getUserBorrowStatisticsForCoin);
+    router.post('/updated_borrow_incur', BorrowIncurSnapshot);
     router.post('/totalborrowintrest', totalBorrowIntrst);
-    router.post('/updated_repaybal_borrow', RepayBalsnapShot);
-    // router.post('/totalborrowintrest2', totalBorrowIntrst2);
 
 
 
