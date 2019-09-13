@@ -26,12 +26,12 @@ var transactionSchema = new Schema({
         type: Number,
     },
     date: {
-        type: Date,
+        type: String,
         default: Date.now()
     },
     status: {
         type: String,
-        enum: ['pending', 'completed', 'partial', 'Procuring Coins', 'Sufficient Coins', 'Insufficient Coins']
+        enum: ['pending', 'Completed', 'partial', 'Procuring Coins', 'Sufficient Coins', 'Insufficient Coins']
     },
     time_stamp: {
         type: Number,

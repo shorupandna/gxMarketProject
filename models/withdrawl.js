@@ -24,21 +24,18 @@ var withdrawlSchema = new Schema({
         type: String,
     },
     timestamp: {
-        type: Date,
-        default: Date.now()
+        type: Number,
     },
     date: {
-        type: Date,
+        type: String,
         default: Date.now()
     },
-    withdraw_requested: { type: String },
+    withdraw_requested: {
+        type: String
+    },
 
     status: {
         type: String
-    },
-    time_stamp: {
-        type: Number,
-        default: Date.now()
     },
     created_at: {
         type: Date,

@@ -32,6 +32,10 @@ var userSupplyStatistics = new Schema({
     created_at: {
         type: Date,
         default: Date.now()
+    },
+    date: {
+        type: String,
+        default: Date.now()
     }
 });
 

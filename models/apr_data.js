@@ -14,7 +14,7 @@ var aprDataSchema = new Schema({
         type: String
     },
     date: {
-        type: Date,
+        type: String
     },
     supply_apr: {
         type: String

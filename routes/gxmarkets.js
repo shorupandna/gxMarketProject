@@ -1,8 +1,24 @@
 /*
  * gx money markets route
- * author : Saileela Puvvada
+ * author : Saileela Puvvada, Karthik(@techkrtk)
  */
 
+//blockchain related code
+let market_json = require('../market-json');
+let web3 = require('../web3init')()
+
+
+const abiDecoder = require('abi-decoder');
+abiDecoder.addABI(market_json);
+
+let configAuth = require('../config')();
+
+let market_contract = web3.eth.Contract(market_json, configAuth.mainnet_market)
+
+// ────────────────────────────────────────────────────────────────────────────────
+
+
+//models import
 var userData = require('../models/user_data');
 var aprData = require('../models/apr_data');
 var Transcations = require('../models/transaction');
@@ -10,28 +26,90 @@ var Withdrawl = require('../models/withdrawl');
 var userSupplyStatistics = require('../models/user_supply_statistics');
 var userBorrowStatistics = require('../models/user_borrow_statistics');
 
+
+//blockchain code
+let get_market_name = (market_addr) => {
+    switch (market_addr) {
+        case "0x0d8775f648430679a709e98d2b0cb6250d2887ef":
+            return ("BAT")
+        case "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359":
+            return ("DAI")
+        case "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2":
+            return ("WETH")
+        case "0x1985365e9f78359a9b6ad760e32412f4a445e862":
+            return ("REP")
+        case "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48":
+            return ("USDC")
+        case "0xe41d2489571d322189246dafa5ebde1f4699f498":
+            return ("ZRX")
+        case "0x60c87297a1feadc3c25993ffcadc54e99971e307":
+            return ("GXT")
+        default:
+            break;
+    }
+
+}
+
 //supply
 var userIntrestCalculationSupply = (req, res) => {
     userData.findOne({
         user_eth_addr: req.body.user_eth_addr.toLowerCase()
     }).exec(function (err, user) {
         if (user) {
-            var supplyCalculation = new userSupplyStatistics({
-                user_eth_addr: user.user_eth_addr.toLowerCase(),
-                market_name: req.body.market_name,
-                supply_balance_snapshot: req.body.supply_balance_snapshot,
-                supply_accrue_snapshot: req.body.supply_accrue_snapshot,
-                withdraw_balance_snapshot: req.body.withdraw_balance_snapshot,
-                supply_withdraw_timestamp_snapshot: req.body.supply_withdraw_timestamp_snapshot
-            });
-            supplyCalculation.save(function (err, supply_acure_saved) {
-                console.log(supply_acure_saved);
-                if (supply_acure_saved) {
-                    res.send(supply_acure_saved);
-                } else {
-                    res.send("failed in saving intrest calculation");
-                }
-            })
+
+            let txn_hash = req.body.txn_hash;
+            let user_eth_addr;
+            let market_name;
+            let supply_balance;
+            let supply_withdraw_accrue;
+
+            web3.eth
+                .getTransactionReceipt(txn_hash)
+                .then(receipt_response => {
+                    if (receipt_response.status) {
+                        web3.eth
+                            .getTransaction(txn_hash)
+                            .then(txn_response => {
+
+                                const decodedData = abiDecoder.decodeMethod(txn_response.input);
+                                console.log(decodedData);
+
+                                user_eth_addr = txn_response.from.toLowerCase();
+                                market_name = get_market_name(decodedData.params[0].value);
+                                supply_balance = parseFloat(decodedData.params[1].value) / 10 ** 18;
+                                market_contract.methods
+                                    .get_supply_balance(user_eth_addr, decodedData.params[0].value)
+                                    .call()
+                                    .then(supply_bal_response => {
+                                        supply_withdraw_accrue = supply_bal_response / 10 ** 18;
+                                        var supplyCalculation = new userSupplyStatistics({
+                                            user_eth_addr: user_eth_addr,
+                                            market_name: market_name,
+                                            supply_balance_snapshot: supply_balance,
+                                            supply_accrue_snapshot: supply_withdraw_accrue,
+                                            withdraw_balance_snapshot: req.body.withdraw_balance_snapshot,
+                                            supply_withdraw_timestamp_snapshot: Date.now()
+                                        });
+                                        supplyCalculation.save(function (err, supply_acure_saved) {
+                                            console.log(supply_acure_saved);
+                                            if (supply_acure_saved) {
+                                                res.send(supply_acure_saved);
+                                            } else {
+                                                res.send("failed in saving intrest calculation");
+                                            }
+                                        })
+                                    })
+
+
+                                // const decodedLogs = abiDecoder.decodeLogs(x.logs);
+                                // console.log(decodedLogs);
+                            });
+                    }
+                });
+
+
+
+
         } else {
             res.send("user_eth_addr not found ");
         };
@@ -163,36 +241,36 @@ var getUserSupplyStatisticsForCoin = (req, res) => {
 var totalSupplyIntrst = (req, res) => {
     userSupplyStatistics.aggregate(
         [{
-            $match: {
-                $and: [{
-                    user_eth_addr: req.body.user_eth_addr.toLowerCase()
-                }, {
-                    market_name: req.body.market_name
-                }]
-            }
-        },
-        {
-            $group: {
-                _id: "$market_name",
-                total_supply_balance_snapshot: {
-                    $sum: "$supply_balance_snapshot"
-                },
-                total_withdraw_balance_snapshot: {
-                    $sum: "$withdraw_balance_snapshot"
-                },
-                count: {
-                    $sum: 1
+                $match: {
+                    $and: [{
+                        user_eth_addr: req.body.user_eth_addr.toLowerCase()
+                    }, {
+                        market_name: req.body.market_name
+                    }]
+                }
+            },
+            {
+                $group: {
+                    _id: "$market_name",
+                    total_supply_balance_snapshot: {
+                        $sum: "$supply_balance_snapshot"
+                    },
+                    total_withdraw_balance_snapshot: {
+                        $sum: "$withdraw_balance_snapshot"
+                    },
+                    count: {
+                        $sum: 1
+                    }
                 }
             }
-        }
         ]).exec(function (err, data) {
-            if (data.length > 0) {
-                res.send(data);
-            } else {
-                res.send("No data available")
-            }
+        if (data.length > 0) {
+            res.send(data);
+        } else {
+            res.send("No data available")
+        }
 
-        });
+    });
 }
 var latestSupWithAccruesnapShot = function (req, res) {
     userSupplyStatistics.find({
@@ -369,39 +447,39 @@ var getUserBorrowStatisticsForCoin = (req, res) => {
 var totalBorrowIntrst = (req, res) => {
     userBorrowStatistics.aggregate(
         [{
-            $match: {
-                $and: [{
-                    user_eth_addr: req.body.user_eth_addr.toLowerCase()
-                }, {
-                    market_name: req.body.market_name
-                }]
-            }
-        },
-        {
-            $group: {
-
-                _id: "$market_name",
-                total_borrow_balance_snapshot: {
-                    $sum: "$borrow_balance_snapshot"
-                },
-                total_repay_balance_snapshot: {
-                    $sum: "$repay_balance_snapshot"
-                },
-                count: {
-                    $sum: 1
+                $match: {
+                    $and: [{
+                        user_eth_addr: req.body.user_eth_addr.toLowerCase()
+                    }, {
+                        market_name: req.body.market_name
+                    }]
                 }
+            },
+            {
+                $group: {
 
+                    _id: "$market_name",
+                    total_borrow_balance_snapshot: {
+                        $sum: "$borrow_balance_snapshot"
+                    },
+                    total_repay_balance_snapshot: {
+                        $sum: "$repay_balance_snapshot"
+                    },
+                    count: {
+                        $sum: 1
+                    }
+
+                }
             }
-        }
         ]).exec(function (err, data) {
-            if (data.length > 0) {
-                console.log(data);
-                res.send(data);
-            } else {
-                res.send("No data available");
-            }
+        if (data.length > 0) {
+            console.log(data);
+            res.send(data);
+        } else {
+            res.send("No data available");
+        }
 
-        });
+    });
 }
 
 var latestRepBorIncursnapShot = function (req, res) {
@@ -550,7 +628,11 @@ var saveTransaction = (req, res) => {
         if (err) {
             res.send(err);
         } else {
-            var saveTransaction = new Transcations(req.body);
+            let request = {
+                ...req.body
+            };
+            request.user_eth_addr = request.user_eth_addr.toLowerCase();
+            var saveTransaction = new Transcations(request);
             saveTransaction.save(function (err, transaction_saved) {
                 if (transaction_saved) {
                     res.send(true);
@@ -579,6 +661,28 @@ var getGxmmTransctions = (req, res) => {
         }
     });
 };
+
+let getGxmmMarketTransctions = (req, res) => {
+    let request = {
+        ...req.body
+    };
+    if (request.market_name == 'all') {
+        var query = {};
+    } else {
+        var query = {
+            market_name: req.body.market_name
+        }
+    }
+
+    Transcations.find(query).exec(function (err, docs) {
+        if (err) {
+            res.send(err);
+            res.send(false);
+        } else {
+            docs.length > 0 ? res.send(docs) : res.send('No Data');
+        }
+    });
+}
 
 var getAllGxmmWithdrawls = (req, res) => {
     Withdrawl.find({}).exec(function (err, txns_withdrawls) {
@@ -695,6 +799,7 @@ module.exports.route = function (router) {
     router.post('/get_withdrawals', getGxmmWithdrawls);
     router.post('/save_txn', saveTransaction);
     router.post('/get_txns', getGxmmTransctions);
+    router.post('/get_market_txns', getGxmmMarketTransctions);
     router.get('/allwithdrawals', getAllGxmmWithdrawls);
     router.post('/update_withdrawl', gxmmUpdateWithdrawl);
     router.post('/get_apr_data', gxmmAprData);

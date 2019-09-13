@@ -41,7 +41,7 @@ var options = {
 };
 
 var connectWithRetry = function () {
-    return mongoose.connect(configAuth.MONGO_LOCAL_PATH, options, function (err) {
+    return mongoose.connect(configAuth.MONGO_SERVER_PATH, options, function (err) {
         if (err) {
             console.log('Failed to connect to mongo on startup - retrying in 5 sec', err);
             setTimeout(connectWithRetry, 5000);
@@ -53,7 +53,7 @@ connectWithRetry();
 // CONNECTION EVENTS
 // When successfully connected
 mongoose.connection.on('connected', function () {
-    console.log('Mongoose default connection open to ' + configAuth.MONGO_LOCAL_PATH);
+    console.log('Mongoose default connection open to ' + configAuth.MONGO_SERVER_PATH);
 });
 // If the connection throws an error
 mongoose.connection.on('error', function (err) {

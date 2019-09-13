@@ -1,46 +1,36 @@
-module.exports = [
-  {
+module.exports = [{
     constant: true,
-    inputs: [
-      {
-        name: "account",
-        type: "address"
-      }
-    ],
+    inputs: [{
+      name: "account",
+      type: "address"
+    }],
     name: "get_account_liquidity",
-    outputs: [
-      {
-        name: "",
-        type: "int256"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "int256"
+    }],
     payable: false,
     stateMutability: "view",
     type: "function"
   },
   {
     constant: false,
-    inputs: [
-      {
-        name: "requestedState",
-        type: "bool"
-      }
-    ],
+    inputs: [{
+      name: "requestedState",
+      type: "bool"
+    }],
     name: "set_paused",
-    outputs: [
-      {
-        name: "",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "nonpayable",
     type: "function"
   },
   {
     constant: false,
-    inputs: [
-      {
+    inputs: [{
         name: "asset",
         type: "address"
       },
@@ -50,20 +40,17 @@ module.exports = [
       }
     ],
     name: "support_market",
-    outputs: [
-      {
-        name: "",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "nonpayable",
     type: "function"
   },
   {
     constant: false,
-    inputs: [
-      {
+    inputs: [{
         name: "asset",
         type: "address"
       },
@@ -73,58 +60,47 @@ module.exports = [
       }
     ],
     name: "set_market_interest_prototype",
-    outputs: [
-      {
-        name: "",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "nonpayable",
     type: "function"
   },
   {
     constant: false,
-    inputs: [
-      {
-        name: "newPendingAdmin",
-        type: "address"
-      }
-    ],
+    inputs: [{
+      name: "newPendingAdmin",
+      type: "address"
+    }],
     name: "set_pending_admin",
-    outputs: [
-      {
-        name: "",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "nonpayable",
     type: "function"
   },
   {
     constant: true,
-    inputs: [
-      {
-        name: "",
-        type: "uint256"
-      }
-    ],
+    inputs: [{
+      name: "",
+      type: "uint256"
+    }],
     name: "collateral_markets",
-    outputs: [
-      {
-        name: "",
-        type: "address"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "address"
+    }],
     payable: false,
     stateMutability: "view",
     type: "function"
   },
   {
     constant: true,
-    inputs: [
-      {
+    inputs: [{
         name: "",
         type: "address"
       },
@@ -134,8 +110,7 @@ module.exports = [
       }
     ],
     name: "borrow_balances",
-    outputs: [
-      {
+    outputs: [{
         name: "principal",
         type: "uint256"
       },
@@ -150,8 +125,7 @@ module.exports = [
   },
   {
     constant: false,
-    inputs: [
-      {
+    inputs: [{
         name: "asset",
         type: "address"
       },
@@ -161,12 +135,10 @@ module.exports = [
       }
     ],
     name: "borrow",
-    outputs: [
-      {
-        name: "",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "nonpayable",
     type: "function"
@@ -175,31 +147,25 @@ module.exports = [
     constant: true,
     inputs: [],
     name: "paused",
-    outputs: [
-      {
-        name: "",
-        type: "bool"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "bool"
+    }],
     payable: false,
     stateMutability: "view",
     type: "function"
   },
   {
     constant: true,
-    inputs: [
-      {
-        name: "asset",
-        type: "address"
-      }
-    ],
+    inputs: [{
+      name: "asset",
+      type: "address"
+    }],
     name: "asset_prices",
-    outputs: [
-      {
-        name: "",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "view",
     type: "function"
@@ -208,20 +174,17 @@ module.exports = [
     constant: true,
     inputs: [],
     name: "liquidation_discount",
-    outputs: [
-      {
-        name: "mantissa",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "mantissa",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "view",
     type: "function"
   },
   {
     constant: true,
-    inputs: [
-      {
+    inputs: [{
         name: "",
         type: "address"
       },
@@ -231,8 +194,7 @@ module.exports = [
       }
     ],
     name: "supply_balances",
-    outputs: [
-      {
+    outputs: [{
         name: "principal",
         type: "uint256"
       },
@@ -247,8 +209,7 @@ module.exports = [
   },
   {
     constant: true,
-    inputs: [
-      {
+    inputs: [{
         name: "account",
         type: "address"
       },
@@ -258,31 +219,25 @@ module.exports = [
       }
     ],
     name: "get_supply_balance",
-    outputs: [
-      {
-        name: "",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "view",
     type: "function"
   },
   {
     constant: false,
-    inputs: [
-      {
-        name: "asset",
-        type: "address"
-      }
-    ],
+    inputs: [{
+      name: "asset",
+      type: "address"
+    }],
     name: "suspend_market",
-    outputs: [
-      {
-        name: "",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "nonpayable",
     type: "function"
@@ -291,20 +246,17 @@ module.exports = [
     constant: true,
     inputs: [],
     name: "collateral_ratio",
-    outputs: [
-      {
-        name: "mantissa",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "mantissa",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "view",
     type: "function"
   },
   {
     constant: false,
-    inputs: [
-      {
+    inputs: [{
         name: "asset",
         type: "address"
       },
@@ -314,20 +266,17 @@ module.exports = [
       }
     ],
     name: "fund",
-    outputs: [
-      {
-        name: "",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "nonpayable",
     type: "function"
   },
   {
     constant: false,
-    inputs: [
-      {
+    inputs: [{
         name: "asset",
         type: "address"
       },
@@ -337,20 +286,17 @@ module.exports = [
       }
     ],
     name: "withdraw_equity",
-    outputs: [
-      {
-        name: "",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "nonpayable",
     type: "function"
   },
   {
     constant: false,
-    inputs: [
-      {
+    inputs: [{
         name: "asset",
         type: "address"
       },
@@ -360,27 +306,22 @@ module.exports = [
       }
     ],
     name: "repay_borrow",
-    outputs: [
-      {
-        name: "",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "nonpayable",
     type: "function"
   },
   {
     constant: true,
-    inputs: [
-      {
-        name: "",
-        type: "address"
-      }
-    ],
+    inputs: [{
+      name: "",
+      type: "address"
+    }],
     name: "markets",
-    outputs: [
-      {
+    outputs: [{
         name: "is_supported",
         type: "bool"
       },
@@ -425,20 +366,17 @@ module.exports = [
     constant: true,
     inputs: [],
     name: "origination_fee",
-    outputs: [
-      {
-        name: "mantissa",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "mantissa",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "view",
     type: "function"
   },
   {
     constant: false,
-    inputs: [
-      {
+    inputs: [{
         name: "targetAccount",
         type: "address"
       },
@@ -456,50 +394,40 @@ module.exports = [
       }
     ],
     name: "liquidate_borrow",
-    outputs: [
-      {
-        name: "",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "nonpayable",
     type: "function"
   },
   {
     constant: false,
-    inputs: [
-      {
-        name: "originationFeeMantissa",
-        type: "uint256"
-      }
-    ],
+    inputs: [{
+      name: "originationFeeMantissa",
+      type: "uint256"
+    }],
     name: "set_origination_fee",
-    outputs: [
-      {
-        name: "",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "nonpayable",
     type: "function"
   },
   {
     constant: false,
-    inputs: [
-      {
-        name: "newOracle",
-        type: "address"
-      }
-    ],
+    inputs: [{
+      name: "newOracle",
+      type: "address"
+    }],
     name: "set_oracle",
-    outputs: [
-      {
-        name: "",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "nonpayable",
     type: "function"
@@ -508,20 +436,17 @@ module.exports = [
     constant: true,
     inputs: [],
     name: "get_collateral_markets_length",
-    outputs: [
-      {
-        name: "",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "view",
     type: "function"
   },
   {
     constant: true,
-    inputs: [
-      {
+    inputs: [{
         name: "account",
         type: "address"
       },
@@ -531,27 +456,22 @@ module.exports = [
       }
     ],
     name: "get_borrow_balance",
-    outputs: [
-      {
-        name: "",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "view",
     type: "function"
   },
   {
     constant: true,
-    inputs: [
-      {
-        name: "userAddress",
-        type: "address"
-      }
-    ],
+    inputs: [{
+      name: "userAddress",
+      type: "address"
+    }],
     name: "calculate_account_values",
-    outputs: [
-      {
+    outputs: [{
         name: "",
         type: "uint256"
       },
@@ -570,8 +490,7 @@ module.exports = [
   },
   {
     constant: false,
-    inputs: [
-      {
+    inputs: [{
         name: "collateralRatioMantissa",
         type: "uint256"
       },
@@ -581,12 +500,10 @@ module.exports = [
       }
     ],
     name: "set_risk_parameters",
-    outputs: [
-      {
-        name: "",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "nonpayable",
     type: "function"
@@ -595,12 +512,10 @@ module.exports = [
     constant: false,
     inputs: [],
     name: "accept_admin",
-    outputs: [
-      {
-        name: "",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "nonpayable",
     type: "function"
@@ -609,12 +524,10 @@ module.exports = [
     constant: true,
     inputs: [],
     name: "pending_admin",
-    outputs: [
-      {
-        name: "",
-        type: "address"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "address"
+    }],
     payable: false,
     stateMutability: "view",
     type: "function"
@@ -623,20 +536,17 @@ module.exports = [
     constant: true,
     inputs: [],
     name: "master",
-    outputs: [
-      {
-        name: "",
-        type: "address"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "address"
+    }],
     payable: false,
     stateMutability: "view",
     type: "function"
   },
   {
     constant: false,
-    inputs: [
-      {
+    inputs: [{
         name: "asset",
         type: "address"
       },
@@ -646,12 +556,10 @@ module.exports = [
       }
     ],
     name: "withdraw",
-    outputs: [
-      {
-        name: "",
-        type: "uint256"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "uint256"
+    }],
     payable: false,
     stateMutability: "nonpayable",
     type: "function"
@@ -660,12 +568,10 @@ module.exports = [
     constant: true,
     inputs: [],
     name: "admin",
-    outputs: [
-      {
-        name: "",
-        type: "address"
-      }
-    ],
+    outputs: [{
+      name: "",
+      type: "address"
+    }],
     payable: false,
     stateMutability: "view",
     type: "function"
@@ -683,8 +589,7 @@ module.exports = [
   },
   {
     anonymous: false,
-    inputs: [
-      {
+    inputs: [{
         indexed: false,
         name: "account",
         type: "address"
@@ -715,8 +620,7 @@ module.exports = [
   },
   {
     anonymous: false,
-    inputs: [
-      {
+    inputs: [{
         indexed: false,
         name: "account",
         type: "address"
@@ -747,8 +651,7 @@ module.exports = [
   },
   {
     anonymous: false,
-    inputs: [
-      {
+    inputs: [{
         indexed: false,
         name: "account",
         type: "address"
@@ -784,8 +687,7 @@ module.exports = [
   },
   {
     anonymous: false,
-    inputs: [
-      {
+    inputs: [{
         indexed: false,
         name: "account",
         type: "address"
@@ -816,8 +718,7 @@ module.exports = [
   },
   {
     anonymous: false,
-    inputs: [
-      {
+    inputs: [{
         indexed: false,
         name: "targetAccount",
         type: "address"
@@ -883,8 +784,7 @@ module.exports = [
   },
   {
     anonymous: false,
-    inputs: [
-      {
+    inputs: [{
         indexed: false,
         name: "oldPendingAdmin",
         type: "address"
@@ -900,8 +800,7 @@ module.exports = [
   },
   {
     anonymous: false,
-    inputs: [
-      {
+    inputs: [{
         indexed: false,
         name: "oldAdmin",
         type: "address"
@@ -917,8 +816,7 @@ module.exports = [
   },
   {
     anonymous: false,
-    inputs: [
-      {
+    inputs: [{
         indexed: false,
         name: "oldOracle",
         type: "address"
@@ -934,8 +832,7 @@ module.exports = [
   },
   {
     anonymous: false,
-    inputs: [
-      {
+    inputs: [{
         indexed: false,
         name: "asset",
         type: "address"
@@ -951,8 +848,7 @@ module.exports = [
   },
   {
     anonymous: false,
-    inputs: [
-      {
+    inputs: [{
         indexed: false,
         name: "oldCollateralRatioMantissa",
         type: "uint256"
@@ -978,8 +874,7 @@ module.exports = [
   },
   {
     anonymous: false,
-    inputs: [
-      {
+    inputs: [{
         indexed: false,
         name: "oldOriginationFeeMantissa",
         type: "uint256"
@@ -995,8 +890,7 @@ module.exports = [
   },
   {
     anonymous: false,
-    inputs: [
-      {
+    inputs: [{
         indexed: false,
         name: "asset",
         type: "address"
@@ -1012,8 +906,7 @@ module.exports = [
   },
   {
     anonymous: false,
-    inputs: [
-      {
+    inputs: [{
         indexed: false,
         name: "asset",
         type: "address"
@@ -1039,32 +932,27 @@ module.exports = [
   },
   {
     anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        name: "asset",
-        type: "address"
-      }
-    ],
+    inputs: [{
+      indexed: false,
+      name: "asset",
+      type: "address"
+    }],
     name: "SuspendedMarket",
     type: "event"
   },
   {
     anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        name: "newState",
-        type: "bool"
-      }
-    ],
+    inputs: [{
+      indexed: false,
+      name: "newState",
+      type: "bool"
+    }],
     name: "SetPaused",
     type: "event"
   },
   {
     anonymous: false,
-    inputs: [
-      {
+    inputs: [{
         indexed: false,
         name: "flaw",
         type: "uint256"
