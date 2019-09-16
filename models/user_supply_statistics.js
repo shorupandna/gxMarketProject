@@ -36,6 +36,9 @@ var userSupplyStatistics = new Schema({
     date: {
         type: String,
         default: Date.now()
+    },
+    txn_hash: {
+        type: String
     }
 });
 

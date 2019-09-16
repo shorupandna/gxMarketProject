@@ -44,6 +44,8 @@ let get_market_name = (market_addr) => {
             return ("ZRX")
         case "0x60c87297a1feadc3c25993ffcadc54e99971e307":
             return ("GXT")
+        case "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599":
+            return ("WBTC")
         default:
             break;
     }
@@ -61,6 +63,7 @@ var userIntrestCalculationSupply = (req, res) => {
             let user_eth_addr;
             let market_name;
             let supply_balance;
+            let withdraw_balance;
             let supply_withdraw_accrue;
 
             web3.eth
@@ -74,9 +77,26 @@ var userIntrestCalculationSupply = (req, res) => {
                                 const decodedData = abiDecoder.decodeMethod(txn_response.input);
                                 console.log(decodedData);
 
+                                if (decodedData.name == "fund") {
+                                    supply_balance = parseFloat(decodedData.params[1].value) / 10 ** 18;
+                                    withdraw_balance = 0;
+                                }
+
+                                if (decodedData.name == "withdraw") {
+                                    withdraw_balance = parseFloat(decodedData.params[1].value) / 10 ** 18;
+                                    supply_balance = 0;
+                                }
+
                                 user_eth_addr = txn_response.from.toLowerCase();
                                 market_name = get_market_name(decodedData.params[0].value);
-                                supply_balance = parseFloat(decodedData.params[1].value) / 10 ** 18;
+
+                                let ts = Date.now();
+                                var options = {
+                                        timeZone: 'America/New_York'
+                                    },
+                                    estTime = new Date(ts);
+                                let date = estTime.toLocaleString('en-US', options);
+
                                 market_contract.methods
                                     .get_supply_balance(user_eth_addr, decodedData.params[0].value)
                                     .call()
@@ -87,8 +107,10 @@ var userIntrestCalculationSupply = (req, res) => {
                                             market_name: market_name,
                                             supply_balance_snapshot: supply_balance,
                                             supply_accrue_snapshot: supply_withdraw_accrue,
-                                            withdraw_balance_snapshot: req.body.withdraw_balance_snapshot,
-                                            supply_withdraw_timestamp_snapshot: Date.now()
+                                            withdraw_balance_snapshot: withdraw_balance,
+                                            supply_withdraw_timestamp_snapshot: Date.now(),
+                                            txn_hash: txn_hash,
+                                            date: date
                                         });
                                         supplyCalculation.save(function (err, supply_acure_saved) {
                                             console.log(supply_acure_saved);
@@ -284,7 +306,10 @@ var latestSupWithAccruesnapShot = function (req, res) {
     }).exec(function (err, sorted_res) {
         console.log(sorted_res[0])
         if (sorted_res.length > 0) {
-            res.send(sorted_res[0].supply_accrue_snapshot.toString());
+            res.send({
+                supply_accrue_snapshot: sorted_res[0].supply_accrue_snapshot,
+                date: sorted_res[0].date
+            });
         } else {
             res.send('Something Wrong');
         }
@@ -297,22 +322,80 @@ var userIntrestCalculationBorrow = (req, res) => {
         user_eth_addr: req.body.user_eth_addr.toLowerCase()
     }).exec(function (err, user) {
         if (user) {
-            var borrowCalculation = new userBorrowStatistics({
-                user_eth_addr: user.user_eth_addr.toLowerCase(),
-                market_name: req.body.market_name,
-                borrow_balance_snapshot: req.body.borrow_balance_snapshot,
-                repay_balance_snapshot: req.body.repay_balance_snapshot,
-                borrow_incur_snapshot: req.body.borrow_incur_snapshot,
-                borrow_repay_timestamp_snapshot: req.body.borrow_repay_timestamp_snapshot
-            });
-            borrowCalculation.save(function (err, borrow_incur_saved) {
-                console.log(borrow_incur_saved);
-                if (borrow_incur_saved) {
-                    res.send(borrow_incur_saved);
-                } else {
-                    res.send("failed in saving borrow calculation");
-                }
-            });
+
+            let txn_hash = req.body.txn_hash;
+            let user_eth_addr;
+            let market_name;
+            let borrow_balance;
+            let repay_balance;
+            let borrow_repay_incur;
+
+            web3.eth
+                .getTransactionReceipt(txn_hash)
+                .then(receipt_response => {
+                    if (receipt_response.status) {
+                        web3.eth
+                            .getTransaction(txn_hash)
+                            .then(txn_response => {
+
+                                const decodedData = abiDecoder.decodeMethod(txn_response.input);
+                                console.log(decodedData);
+
+                                if (decodedData.name == "borrow") {
+                                    borrow_balance = parseFloat(decodedData.params[1].value) / 10 ** 18;
+                                    repay_balance = 0;
+                                }
+
+                                if (decodedData.name == "repay_borrow") {
+                                    repay_balance = parseFloat(decodedData.params[1].value) / 10 ** 18;
+                                    borrow_balance = 0;
+                                }
+
+                                user_eth_addr = txn_response.from.toLowerCase();
+                                market_name = get_market_name(decodedData.params[0].value);
+
+                                let ts = Date.now();
+                                var options = {
+                                        timeZone: 'America/New_York'
+                                    },
+                                    estTime = new Date(ts);
+                                let date = estTime.toLocaleString('en-US', options);
+
+                                market_contract.methods
+                                    .get_borrow_balance(user_eth_addr, decodedData.params[0].value)
+                                    .call()
+                                    .then(borrow_bal_response => {
+                                        borrow_repay_incur = borrow_bal_response / 10 ** 18;
+                                        var borrowCalculation = new userBorrowStatistics({
+                                            user_eth_addr: user_eth_addr,
+                                            market_name: market_name,
+                                            borrow_balance_snapshot: borrow_balance,
+                                            repay_balance_snapshot: repay_balance,
+                                            borrow_incur_snapshot: borrow_repay_incur,
+                                            borrow_repay_timestamp_snapshot: Date.now(),
+                                            date: date
+                                        });
+                                        borrowCalculation.save(function (err, borrow_incur_saved) {
+                                            console.log(borrow_incur_saved);
+                                            if (borrow_incur_saved) {
+                                                res.send(borrow_incur_saved);
+                                            } else {
+                                                res.send("failed in saving borrow calculation");
+                                            }
+                                        });
+
+                                    })
+
+
+                                // const decodedLogs = abiDecoder.decodeLogs(x.logs);
+                                // console.log(decodedLogs);
+                            });
+                    }
+                });
+
+
+
+
         } else {
             res.send("No user_eth_addr found");
         };
@@ -492,8 +575,11 @@ var latestRepBorIncursnapShot = function (req, res) {
     }).sort({
         borrow_repay_timestamp_snapshot: -1
     }).exec(function (err, sorted_res) {
-        if (sorted_res) {
-            res.send(sorted_res[0].borrow_incur_snapshot.toString());
+        if (sorted_res.length > 0) {
+            res.send({
+                borrow_incur_snapshot: sorted_res[0].supply_accrue_snapshot,
+                date: sorted_res[0].date
+            });
         } else {
             res.send('Something Wrong');
         }

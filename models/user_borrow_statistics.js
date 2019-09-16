@@ -31,6 +31,9 @@ var userBorrowStatistics = new Schema({
     created_at: {
         type: Date,
         default: new Date()
+    },
+    txn_hash: {
+        type: String
     }
 });
 
