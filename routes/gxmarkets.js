@@ -609,7 +609,7 @@ var createGxmmMarket = (req, res) => {
             });
         } else {
             userData.update({
-                user_eth_addr: query.user_eth_addr
+                user_eth_addr: query.user_eth_addr.toLowerCase()
             }, {
                 $push: {
                     markets: {
@@ -630,7 +630,8 @@ var createGxmmMarket = (req, res) => {
             user_eth_addr: req.body.user_eth_addr.toLowerCase(),
             description: `Enabled ${req.body.market_name}`,
             market_name: req.body.market_name,
-            txn_hash: req.body.txn_hash
+            txn_hash: req.body.txn_hash,
+            date:  req.body.date
         });
         TranscationsStats.save();
     });
