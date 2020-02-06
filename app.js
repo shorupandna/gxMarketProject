@@ -37,7 +37,8 @@ var options = {
     reconnectTries: 300000,
     reconnectInterval: 5000,
     useNewUrlParser: true,
-    auto_reconnect: true
+    auto_reconnect: true,
+    dbName: 'gxmarkets'
 };
 
 var connectWithRetry = function () {
