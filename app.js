@@ -45,6 +45,7 @@ var options = {
   reconnectInterval: 5000,
   useNewUrlParser: true,
   auto_reconnect: true,
+  useUnifiedTopology: true, 
   dbName: "gxmarketsnew1029",
 };
 
